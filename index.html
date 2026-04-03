@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kemon - Serial Number Generator</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #00f2ff;
+            --bg: #f8fafc;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 400px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        h2 { color: var(--primary); margin-bottom: 5px; }
+        p.subtitle { color: #64748b; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #475569;
+            text-transform: uppercase;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin-top: 5px;
+            font-family: monospace;
+        }
+        input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #1e293b; }
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            display: none;
+            border: 1px dashed #cbd5e1;
+        }
+        .result-box.show { display: block; }
+        .serial-output {
+            font-family: 'Monaco', monospace;
+            font-size: 18px;
+            font-weight: 900;
+            color: #0f172a;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #10b981;
+            margin-top: 15px;
+        }
+        .copy-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Keygen Lucky Draw</h2>
+        <p class="subtitle">Khusus Admin</p>
+
+        <div class="input-group">
+            <label>Masukkan Request Code Klien</label>
+            <input type="text" id="req-input" placeholder="Contoh: KEM-TURBMV" style="text-transform: uppercase;">
+        </div>
+
+        <button onclick="generateSN()">BUAT SERIAL NUMBER</button>
+
+        <div class="result-box" id="res-box">
+            <label>Serial Number Klien:</label>
+            <div class="serial-output" id="sn-output"></div>
+            <button class="copy-btn" id="btn-copy" onclick="copyToClipboard()">Salin Kode</button>
+        </div>
+    </div>
+
+    <script>
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(16).toUpperCase();
+        }
+
+        function generateSN() {
+            const reqCode = document.getElementById('req-input').value.trim().toUpperCase();
+            
+            if (!reqCode) {
+                alert("Masukkan Request Code terlebih dahulu!");
+                return;
+            }
+
+            // PERINGATAN: String rahasia di bawah ini wajib sama persis dengan yang ada di aplikasi utama Anda!
+            const secretKey = reqCode + "KEMON_SECRET_2026";
+            const finalSN = "SN-" + simpleHash(secretKey);
+
+            document.getElementById('sn-output').innerText = finalSN;
+            document.getElementById('res-box').classList.add('show');
+            document.getElementById('btn-copy').innerText = "Salin Kode";
+        }
+
+        function copyToClipboard() {
+            const sn = document.getElementById('sn-output').innerText;
+            navigator.clipboard.writeText(sn).then(() => {
+                document.getElementById('btn-copy').innerText = "Berhasil Disalin! ✨";
+            });
+        }
+    </script>
+</body>
+</html>
